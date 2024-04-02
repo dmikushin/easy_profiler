@@ -233,8 +233,8 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Objects count: " << OBJECTS << std::endl;
-    std::cout << "Render steps: " << MODELLING_STEPS << std::endl;
-    std::cout << "Modelling steps: " << RENDER_STEPS << std::endl;
+    std::cout << "Render steps: " << RENDER_STEPS << std::endl;
+    std::cout << "Modelling steps: " << MODELLING_STEPS << std::endl;
     std::cout << "Resource loading count: " << RESOURCE_LOADING_COUNT << std::endl;
 
     auto start = std::chrono::system_clock::now();
