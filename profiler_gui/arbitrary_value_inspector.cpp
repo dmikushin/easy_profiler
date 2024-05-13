@@ -767,7 +767,7 @@ void ArbitraryValuesChartItem::paintMouseIndicator(QPainter* _painter, qreal _to
             valueString = profiler_gui::autoTimeStringRealNs(value, 3);
         }
 
-        const int textWidth = _painter->fontMetrics().width(valueString) + 3;
+        const int textWidth = _painter->fontMetrics().boundingRect(valueString).width() + 3;
         const QRectF rect(0, y - _font_h - 2, _width - 3, 4 + (_font_h << 1));
 
         _painter->setPen(Qt::blue);
@@ -810,7 +810,7 @@ void ArbitraryValuesChartItem::paintMouseIndicator(QPainter* _painter, qreal _to
             valueString = QString::number(value, 'f', 3);
         }
 
-        const int textWidth = _painter->fontMetrics().width(valueString) + 6;
+        const int textWidth = _painter->fontMetrics().boundingRect(valueString).width() + 6;
         const int textWidthHalf = textWidth >> 1;
 
         qreal left = x - textWidthHalf;
@@ -2034,7 +2034,7 @@ void ArbitraryValuesWidget::showEvent(QShowEvent* event)
         const auto indicatorSize = header->isSortIndicatorShown() ? px(11) : 0;
         for (int i = 0; i < static_cast<int>(m_columnsMinimumWidth.size()); ++i)
         {
-            auto minSize = static_cast<int>(fm.width(headerItem->text(i)) * profiler_gui::FONT_METRICS_FACTOR + padding);
+            auto minSize = static_cast<int>(fm.boundingRect(headerItem->text(i)).width() * profiler_gui::FONT_METRICS_FACTOR + padding);
             m_columnsMinimumWidth[i] = minSize;
 
             if (header->isSortIndicatorShown() && header->sortIndicatorSection() == i)
@@ -2850,7 +2850,7 @@ QTreeWidgetItem* ArbitraryValuesWidget::buildTreeForThread(const profiler::Block
                                     item->setText(int_cast(ArbitraryColumns::Value), profiler_gui::valueString(*value, childIndex));
 
                                 const auto sizeHintWidth = valueItem->sizeHint(CheckColumn).width();
-                                item->setWidthHint(std::max(sizeHintWidth, fm.width(valueItem->text(CheckColumn))) + 32);
+                                item->setWidthHint(std::max(sizeHintWidth, fm.boundingRect(valueItem->text(CheckColumn)).width()) + 32);
                             }
 
                             auto typeString = profiler_gui::valueTypeString(*value);
@@ -2893,7 +2893,7 @@ QTreeWidgetItem* ArbitraryValuesWidget::buildTreeForThread(const profiler::Block
                         valueItem->setText(int_cast(ArbitraryColumns::Value), profiler_gui::shortValueString(*value));
 
                     auto sizeHintWidth = valueItem->sizeHint(CheckColumn).width();
-                    valueItem->setWidthHint(std::max(sizeHintWidth, fm.width(valueItem->text(CheckColumn))) + 32);
+                    valueItem->setWidthHint(std::max(sizeHintWidth, fm.boundingRect(valueItem->text(CheckColumn)).width()) + 32);
 
                     *(usedItems + typeIndex) = valueItem;
 
@@ -2912,7 +2912,7 @@ QTreeWidgetItem* ArbitraryValuesWidget::buildTreeForThread(const profiler::Block
                                     item->setText(int_cast(ArbitraryColumns::Value), profiler_gui::valueString(*value, childIndex));
 
                                 sizeHintWidth = valueItem->sizeHint(CheckColumn).width();
-                                item->setWidthHint(std::max(sizeHintWidth, fm.width(valueItem->text(CheckColumn))) + 32);
+                                item->setWidthHint(std::max(sizeHintWidth, fm.boundingRect(valueItem->text(CheckColumn)).width()) + 32);
                             }
 
                             auto typeString = profiler_gui::valueTypeString(*value);

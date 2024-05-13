@@ -211,7 +211,7 @@ public:
     explicit StatsWidget(QWidget* _parent = nullptr);
     ~StatsWidget() override;
 
-    void enterEvent(QEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
     void leaveEvent(QEvent* event) override;
     void keyPressEvent(QKeyEvent* _event) override;
     void contextMenuEvent(QContextMenuEvent* _event) override;

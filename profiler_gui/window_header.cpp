@@ -333,7 +333,7 @@ void WindowHeader::showEvent(QShowEvent* event)
     if (!m_pixmap->windowIcon().isNull())
     {
         const int size = std::max(m_title->fontMetrics().height(), 16);
-        if (m_pixmap->pixmap()->height() != size)
+        if (m_pixmap->pixmap().height() != size)
             m_pixmap->setPixmap(m_pixmap->windowIcon().pixmap(size, size));
     }
 

@@ -434,7 +434,7 @@ void RoundProgressIndicator::updateSize()
     const QFontMetrics fm(font());
     const QString text = QStringLiteral("100%");
     const int margins = m_indicatorWidth * 4 + px(2);
-    const int size = static_cast<int>(std::max(fm.width(text), fm.height()) * profiler_gui::FONT_METRICS_FACTOR) + margins;
+    const int size = static_cast<int>(std::max(fm.boundingRect(text).width(), fm.height()) * profiler_gui::FONT_METRICS_FACTOR) + margins;
 
     setFixedSize(size, size);
 
@@ -514,7 +514,7 @@ void RoundProgressIndicator::paintEvent(QPaintEvent* /*event*/)
     {
         // Draw text
         p.setWidth(px(1));
-        p.setColor(palette().foreground().color());
+        p.setColor(palette().window().color());
         painter.setPen(p);
         painter.setFont(font());
         painter.drawText(r, Qt::AlignCenter, m_text);
@@ -555,7 +555,7 @@ void RoundProgressIndicator::paintStopButton(QPainter& painter, QRect& r)
     painter.drawRect(r);
 }
 
-void RoundProgressIndicator::enterEvent(QEvent* event) {
+void RoundProgressIndicator::enterEvent(QEnterEvent* event) {
     Parent::enterEvent(event);
     profiler_gui::updateProperty(this, "hover", true);
 }

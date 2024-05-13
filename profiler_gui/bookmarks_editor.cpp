@@ -104,7 +104,7 @@ BookmarkEditor::BookmarkEditor(size_t bookmarkIndex, bool isNew, QWidget* parent
     connect(m_colorButton, &QPushButton::clicked, this, &This::onColorButtonClicked);
 
     auto palette = m_colorButton->palette();
-    palette.setBrush(QPalette::Background, QBrush(QColor::fromRgb(bookmark.color)));
+    palette.setBrush(QPalette::Window, QBrush(QColor::fromRgb(bookmark.color)));
     m_colorButton->setPalette(palette);
     m_colorButton->setStyleSheet(QString("background-color: %1;").arg(QColor::fromRgb(bookmark.color).name()));
 
@@ -156,7 +156,7 @@ void BookmarkEditor::onSaveClicked(bool)
     auto& bookmark = EASY_GLOBALS.bookmarks[m_bookmarkIndex];
 
     bookmark.text = m_textEdit->toPlainText().trimmed().toStdString();
-    bookmark.color = m_colorButton->palette().brush(QPalette::Background).color().rgb();
+    bookmark.color = m_colorButton->palette().brush(QPalette::Window).color().rgb();
     EASY_GLOBALS.bookmark_default_color = bookmark.color;
     EASY_GLOBALS.has_local_changes = true;
 
@@ -175,11 +175,11 @@ void BookmarkEditor::onColorButtonClicked(bool)
 {
     auto palette = m_colorButton->palette();
 
-    QColorDialog colorDialog(palette.brush(QPalette::Background).color(), this);
+    QColorDialog colorDialog(palette.brush(QPalette::Window).color(), this);
     colorDialog.exec();
 
     auto color = colorDialog.currentColor();
-    palette.setBrush(QPalette::Background, QBrush(color));
+    palette.setBrush(QPalette::Window, QBrush(color));
     m_colorButton->setPalette(palette);
 
     m_colorButton->setStyleSheet(QString("background-color: %1;").arg(color.name()));

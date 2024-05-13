@@ -230,7 +230,7 @@ public:
 
     // Public virtual methods
 
-    void enterEvent(QEvent* _event) override;
+    void enterEvent(QEnterEvent* _event) override;
     void leaveEvent(QEvent* _event) override;
     void wheelEvent(QWheelEvent* _event) override;
     void mousePressEvent(QMouseEvent* _event) override;
@@ -384,7 +384,7 @@ public:
     explicit ThreadNamesWidget(BlocksGraphicsView* _view, int _additionalHeight, QWidget* _parent = nullptr);
     ~ThreadNamesWidget() override;
 
-    void enterEvent(QEvent* _event) override;
+    void enterEvent(QEnterEvent* _event) override;
     void leaveEvent(QEvent* _event) override;
     void mousePressEvent(QMouseEvent* _event) override;
     void mouseDoubleClickEvent(QMouseEvent* _event) override;

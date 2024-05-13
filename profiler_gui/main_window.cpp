@@ -59,6 +59,7 @@
 ************************************************************************/
 
 #include <fstream>
+#include <stdlib.h>
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -96,6 +97,7 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 #include <QWidgetAction>
+#include <QActionGroup>
 
 #include <easy/easy_net.h>
 #include <easy/profiler.h>
@@ -429,7 +431,7 @@ MainWindow::MainWindow() : Parent(), m_theme("default"), m_lastAddress("localhos
     //QRegExp rx("^0*(2(5[0-5]|[0-4]\\d)|1?\\d{1,2})(\\.0*(2(5[0-5]|[0-4]\\d)|1?\\d{1,2})){3}$");
     //m_addressEdit->setValidator(new QRegExpValidator(rx, m_addressEdit));
     m_addressEdit->setText(m_lastAddress);
-    m_addressEdit->setFixedWidth((m_addressEdit->fontMetrics().width(QString("255.255.255.255")) * 3) / 2);
+    m_addressEdit->setFixedWidth((m_addressEdit->fontMetrics().boundingRect(QString("255.255.255.255")).width() * 3) / 2);
     toolbar->addWidget(m_addressEdit);
 
     lbl = new QLabel("Port:", toolbar);
@@ -438,7 +440,7 @@ MainWindow::MainWindow() : Parent(), m_theme("default"), m_lastAddress("localhos
     m_portEdit = new QLineEdit();
     m_portEdit->setValidator(new QIntValidator(1, 65535, m_portEdit));
     m_portEdit->setText(QString::number(m_lastPort));
-    m_portEdit->setFixedWidth(m_portEdit->fontMetrics().width(QString("000000")) + 10);
+    m_portEdit->setFixedWidth(m_portEdit->fontMetrics().boundingRect(QString("000000")).width() + 10);
     toolbar->addWidget(m_portEdit);
 
     connect(m_addressEdit, &QLineEdit::returnPressed, [this] { onConnectClicked(true); });
@@ -889,14 +891,14 @@ MainWindow::MainWindow() : Parent(), m_theme("default"), m_lastAddress("localhos
             connect(action, &QAction::triggered, this, &This::onEncodingChanged);
         }
 
-        qSort(actions.begin(), actions.end(), [](QAction* lhs, QAction* rhs) {
-            return lhs->text().compare(rhs->text(), Qt::CaseInsensitive) < 0;
-        });
+        std::sort(actions.begin(), actions.end(),
+            [](QAction* lhs, QAction* rhs)
+            {
+               return lhs->text().compare(rhs->text(), Qt::CaseInsensitive) < 0;
+            });
 
         submenu->addActions(actions);
     }
-
-
 
     submenu = menu->addMenu("Appearance");
 
@@ -1618,9 +1620,9 @@ void MainWindow::onDescTreeDialogClose(int)
 
 void MainWindow::validateLineEdits()
 {
-    m_addressEdit->setFixedWidth((m_addressEdit->fontMetrics().width(QString("255.255.255.255")) * 3) / 2);
-    m_portEdit->setFixedWidth(m_portEdit->fontMetrics().width(QString("000000")) + 10);
-    m_frameTimeEdit->setFixedWidth(m_frameTimeEdit->fontMetrics().width(QString("000.000")) + 5);
+    m_addressEdit->setFixedWidth((m_addressEdit->fontMetrics().boundingRect(QString("255.255.255.255")).width() * 3) / 2);
+    m_portEdit->setFixedWidth(m_portEdit->fontMetrics().boundingRect(QString("000000")).width() + 10);
+    m_frameTimeEdit->setFixedWidth(m_frameTimeEdit->fontMetrics().boundingRect(QString("000.000")).width() + 5);
 }
 
 //////////////////////////////////////////////////////////////////////////

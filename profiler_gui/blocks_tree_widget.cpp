@@ -446,7 +446,7 @@ bool BlocksTreeWidget::eventFilter(QObject* _object, QEvent* _event)
 
                 for (int i = 0; i < COL_COLUMNS_NUMBER; ++i)
                 {
-                    m_columnsMinimumWidth[i] = static_cast<int>(fm.width(headerItem()->text(i)) * profiler_gui::FONT_METRICS_FACTOR + padding);
+                    m_columnsMinimumWidth[i] = static_cast<int>(fm.boundingRect(headerItem()->text(i)).width() * profiler_gui::FONT_METRICS_FACTOR + padding);
                 }
 
                 EASY_CONSTEXPR int Margins = 20;
@@ -1645,7 +1645,7 @@ void StatsWidget::saveSettings()
     settings.endGroup();
 }
 
-void StatsWidget::enterEvent(QEvent* event)
+void StatsWidget::enterEvent(QEnterEvent* event)
 {
     Parent::enterEvent(event);
     m_tree->updateHintLabelOnHover(true);

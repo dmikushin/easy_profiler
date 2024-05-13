@@ -144,7 +144,7 @@ ArbitraryValueToolTip::ArbitraryValueToolTip(const QString& _name
 
     QFontMetrics fm(EASY_GLOBALS.font.default_font);
     QFontMetrics fm2(font);
-    pane->setMinimumWidth(fm.width(firstString) + 24);
+    pane->setMinimumWidth(fm.boundingRect(firstString).width() + 24);
     pane->setMaximumHeight((fm.height() + fm.leading() + 1) * rowsCount);
 
     setMaximumHeight(pane->maximumHeight() + fm2.height() + fm2.leading() + 10);

@@ -223,7 +223,9 @@ void FpsGraphicsItem::paint(QPainter* _painter, const QStyleOptionGraphicsItem*,
 
     _painter->setPen(Qt::NoPen);
     _painter->setBrush(Qt::white);
-    _painter->drawRect(0, top + 1, std::max({fontMetrics.width(txtTop), fontMetrics.width(txtMid), fontMetrics.width(txtBtm)}) + 8, bottom - top - 1);
+    _painter->drawRect(0, top + 1, std::max({fontMetrics.boundingRect(txtTop).width(),
+                                             fontMetrics.boundingRect(txtMid).width(),
+                                             fontMetrics.boundingRect(txtBtm).width()}) + 8, bottom - top - 1);
 
     _painter->setPen(Qt::black);
     _painter->setBrush(Qt::NoBrush);

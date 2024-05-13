@@ -154,7 +154,7 @@ void GraphicsHistogramItem::paintMouseIndicator(QPainter* _painter, qreal _top, 
         else
         {
             _painter->drawText(rect, Qt::AlignLeft | Qt::AlignVCenter, mouseStr);
-            mouseIndicatorLeft = _painter->fontMetrics().width(mouseStr) + 3;
+            mouseIndicatorLeft = _painter->fontMetrics().boundingRect(mouseStr).width() + 3;
         }
 
         _painter->drawLine(QLineF(mouseIndicatorLeft, _mouse_y, mouseIndicatorRight, _mouse_y));

@@ -623,7 +623,7 @@ QSize TreeWidgetItemDelegate::sizeHint(const QStyleOptionViewItem& option, const
     // unfortunately, Qt does not take padding into account, so have to add it manually...
     const auto padding = px(15);
     auto text = displayData.toString();
-    const auto width = static_cast<int>((m_treeWidget->fontMetrics().width(text) + padding) * 1.05);
+    const auto width = static_cast<int>((m_treeWidget->fontMetrics().boundingRect(text).width() + padding) * 1.05);
 
     const auto brushData = m_treeWidget->model()->data(index, BlockColorRole);
     if (brushData.isNull())

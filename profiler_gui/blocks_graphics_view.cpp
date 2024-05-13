@@ -231,7 +231,7 @@ void BackgroundItem::paint(QPainter* _painter, const QStyleOptionGraphicsItem*, 
     qreal first_x = first * sceneStep;
 
     const auto textWidth = QFontMetricsF(_painter->font(), sceneView).
-        width(QString::number(static_cast<quint64>(0.5 + first_x * factor))) * profiler_gui::FONT_METRICS_FACTOR + px(10);
+        boundingRect(QString::number(static_cast<quint64>(0.5 + first_x * factor))).width() * profiler_gui::FONT_METRICS_FACTOR + px(10);
 
     const int n = 1 + static_cast<int>(textWidth / step);
     int next = first % n;
@@ -1288,7 +1288,7 @@ void BlocksGraphicsView::scaleTo(qreal _scale)
 
 //////////////////////////////////////////////////////////////////////////
 
-void BlocksGraphicsView::enterEvent(QEvent* _event)
+void BlocksGraphicsView::enterEvent(QEnterEvent* _event)
 {
     Parent::enterEvent(_event);
     m_bHovered = true;
@@ -1323,7 +1323,7 @@ void BlocksGraphicsView::wheelEvent(QWheelEvent* _event)
     m_idleTime = 0;
 
     if (!m_bEmpty)
-        onWheel(mapToDiagram(mapToScene(_event->pos()).x()), _event->delta());
+        onWheel(mapToDiagram(mapToScene(_event->position().toPoint()).x()), _event->angleDelta().y());
 
     _event->accept();
 }
@@ -3078,7 +3078,7 @@ void ThreadNamesWidget::onTreeChange()
     qreal maxLength = 100;
     const auto& graphicsItems = m_view->getItems();
     for (auto graphicsItem : graphicsItems)
-        maxLength = std::max(maxLength, (10 + fm.width(graphicsItem->threadName())) * profiler_gui::FONT_METRICS_FACTOR);
+        maxLength = std::max(maxLength, (10 + fm.boundingRect(graphicsItem->threadName()).width()) * profiler_gui::FONT_METRICS_FACTOR);
 
     auto vbar = verticalScrollBar();
     auto viewBar = m_view->verticalScrollBar();
@@ -3247,7 +3247,7 @@ void ThreadNamesWidget::repaintScene()
     scene()->update();
 }
 
-void ThreadNamesWidget::enterEvent(QEvent* _event)
+void ThreadNamesWidget::enterEvent(QEnterEvent* _event)
 {
     Parent::enterEvent(_event);
     m_bHovered = true;
@@ -3342,7 +3342,7 @@ void ThreadNamesWidget::wheelEvent(QWheelEvent* _event)
         _event->accept();
 
         const auto prev = vbar->value();
-        vbar->setValue(vbar->value() - _event->delta());
+        vbar->setValue(vbar->value() - _event->angleDelta().y());
 
         if (prev != vbar->value())
         {

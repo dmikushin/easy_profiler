@@ -539,7 +539,7 @@ void GraphicsSliderArea::wheelEvent(QWheelEvent* _event)
 
         if (m_imageItem->isVisible())
         {
-            if (_event->delta() > 0)
+            if (_event->angleDelta().y() > 0)
                 m_imageItem->increaseTopValue();
             else
                 m_imageItem->decreaseTopValue();
@@ -554,7 +554,7 @@ void GraphicsSliderArea::wheelEvent(QWheelEvent* _event)
 
         if (m_imageItem->isVisible())
         {
-            if (_event->delta() > 0)
+            if (_event->angleDelta().y() > 0)
                 m_imageItem->increaseBottomValue();
             else
                 m_imageItem->decreaseBottomValue();
@@ -565,16 +565,16 @@ void GraphicsSliderArea::wheelEvent(QWheelEvent* _event)
 
     if (!bindMode())
     {
-        const auto w = m_slider->halfwidth() * (_event->delta() < 0 ? profiler_gui::SCALING_COEFFICIENT : profiler_gui::SCALING_COEFFICIENT_INV);
-        setValue(mapToScene(_event->pos()).x() - m_minimumValue - w);
-        emit EASY_GLOBALS.events.chartWheeled(m_value + w * m_windowScale, _event->delta());
+        const auto w = m_slider->halfwidth() * (_event->angleDelta().y() < 0 ? profiler_gui::SCALING_COEFFICIENT : profiler_gui::SCALING_COEFFICIENT_INV);
+        setValue(mapToScene(_event->position().toPoint()).x() - m_minimumValue - w);
+        emit EASY_GLOBALS.events.chartWheeled(m_value + w * m_windowScale, _event->angleDelta().y());
     }
     else
     {
-        auto x = static_cast<qreal>(_event->pos().x()) / m_windowScale;
+        auto x = static_cast<qreal>(_event->position().x()) / m_windowScale;
         if (m_bBindMode) // check m_bBindMode because it may differ from bindMode() for arbitrary value complexity chart
             x *= sliderWidth() / range();
-        emit EASY_GLOBALS.events.chartWheeled(m_value + x, _event->delta());
+        emit EASY_GLOBALS.events.chartWheeled(m_value + x, _event->angleDelta().y());
     }
 }
 

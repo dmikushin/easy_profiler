@@ -4,10 +4,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5Widgets)
+find_package(Qt6Widgets)
+find_package(Qt6Core5Compat)
 
-if (Qt5Widgets_FOUND)
-    message(STATUS "Using Qt v${Qt5Widgets_VERSION}")
+if (Qt6Widgets_FOUND)
+    message(STATUS "Using Qt v${Qt6Widgets_VERSION}")
     if (NOT("${CMAKE_BUILD_TYPE}" STREQUAL "Debug") AND WIN32)
         set(APPLICATION_PLATFORM WIN32)
     endif ()
@@ -70,7 +71,7 @@ if (Qt5Widgets_FOUND)
         resources.qrc
         resources.rc
     )
-    target_link_libraries(profiler_gui Qt5::Widgets easy_profiler)
+    target_link_libraries(profiler_gui Qt6::Widgets Qt6::Core5Compat easy_profiler)
     if (WIN32)
         target_compile_definitions(profiler_gui PRIVATE -D_WIN32_WINNT=0x0600)
     endif ()

@@ -88,14 +88,14 @@ void TextHighlighter::highlightBlock(const QString& text)
     }
 
     QRegExp expression(m_pattern, m_caseSensitivity);
-    int index = text.indexOf(expression);
+    int index = text.indexOf(expression.pattern());
     while (index >= 0)
     {
         const auto length = expression.cap().length();
         setFormat(index, length, m_textCharFormat);
 
         auto prevIndex = index;
-        index = text.indexOf(expression, index + length);
+        index = text.indexOf(expression.pattern(), index + length);
         if (index <= prevIndex)
         {
             break;

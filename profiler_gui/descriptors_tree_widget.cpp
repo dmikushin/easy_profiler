@@ -74,6 +74,7 @@
 #include <QToolBar>
 #include <QVariant>
 #include <QVBoxLayout>
+#include <QRegExp>
 
 #include "descriptors_tree_widget.h"
 
@@ -338,7 +339,7 @@ void DescriptorsTreeWidget::showEvent(QShowEvent* event)
         const auto indicatorSize = header->isSortIndicatorShown() ? px(11) : 0;
         for (int i = 0; i < DESC_COL_COLUMNS_NUMBER; ++i)
         {
-            auto minSize = static_cast<int>(fm.width(headerItem->text(i)) * profiler_gui::FONT_METRICS_FACTOR + padding);
+            auto minSize = static_cast<int>(fm.boundingRect(headerItem->text(i)).width() * profiler_gui::FONT_METRICS_FACTOR + padding);
             m_columnsMinimumWidth[i] = minSize;
 
             if (header->isSortIndicatorShown() && header->sortIndicatorSection() == i)
@@ -552,8 +553,8 @@ void DescriptorsTreeWidget::build()
             if (p.item == nullptr)
             {
                 auto item = new DescriptorsTreeItem(0);
-                auto fullName = QString(desc->file()).remove(QRegExp("^(\\.{2}\\\\+)+")); // without leading "..\"
-                auto fileName = QString(desc->file()).remove(QRegExp("^(.+(\\\\|\\/)+)+"));
+                auto fullName = QString(desc->file()).remove(QRegExp("^(\\.{2}\\\\+)+").pattern()); // without leading "..\"
+                auto fileName = QString(desc->file()).remove(QRegExp("^(.+(\\\\|\\/)+)+").pattern());
                 auto dir = fullName.left(fullName.length() - fileName.length());
 
                 if (count == 1)
