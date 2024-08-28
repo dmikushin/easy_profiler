@@ -127,7 +127,7 @@ PROFILER_API const char* apiVersionName()
 
 #if !defined(EASY_PROFILER_API_DISABLED)
 
-PROFILER_API profiler::timestamp_t now()
+PROFILER_API profiler::timestamp_t timeNow()
 {
     return profiler::clock::now();
 }
@@ -295,7 +295,7 @@ PROFILER_API profiler::timestamp_t main_thread_frameTimeLocalAvg(profiler::Durat
 
 #else // EASY_PROFILER_API_DISABLED
 
-PROFILER_API profiler::timestamp_t now() { return 0; }
+PROFILER_API profiler::timestamp_t timeNow() { return 0; }
 PROFILER_API profiler::timestamp_t toNanoseconds(profiler::timestamp_t) { return 0; }
 PROFILER_API profiler::timestamp_t toMicroseconds(profiler::timestamp_t) { return 0; }
 

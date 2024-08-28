@@ -464,7 +464,7 @@ namespace profiler {
 
         \ingroup profiler
         */
-        PROFILER_API timestamp_t now();
+        PROFILER_API timestamp_t timeNow();
 
         /** Convert ticks to nanoseconds.
 
@@ -766,7 +766,7 @@ namespace profiler {
 
     }
 #else
-    inline EASY_CONSTEXPR_FCN timestamp_t now() { return 0; }
+    inline EASY_CONSTEXPR_FCN timestamp_t timeNow() { return 0; }
     inline EASY_CONSTEXPR_FCN timestamp_t toNanoseconds(timestamp_t) { return 0; }
     inline EASY_CONSTEXPR_FCN timestamp_t toMicroseconds(timestamp_t) { return 0; }
     inline const BaseBlockDescriptor* registerDescription(EasyBlockStatus, const char*, const char*, const char*, int, block_type_t, color_t, bool = false)
@@ -898,7 +898,7 @@ namespace profiler {
 
     \ingroup profiler
     */
-    EASY_FORCE_INLINE timestamp_t currentTime() { return now(); }
+    EASY_FORCE_INLINE timestamp_t currentTime() { return timeNow(); }
 
     //////////////////////////////////////////////////////////////////////
 
