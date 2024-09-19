@@ -1,3 +1,7 @@
+// This example code reads a profiling file, processes it,
+// and optionally dumps the reader profiling data itself to another file.
+// It also prints a tree structure of the profiling data to the console.
+
 #include <easy/profiler.h>
 #include <easy/reader.h>
 #include <fstream>
@@ -10,79 +14,77 @@
 #include <algorithm> 
 #include <ctime>
 #include <chrono>
-#include <iostream>
 #include <string>
 #include <sstream>
 
 class TreePrinter
 {
-    struct Info{
+    const profiler::blocks_t& blocks;
+
+    struct Info
+    {
         std::string name;
         std::string info;
     };
     std::vector<Info> m_rows;
 
-public:
-    TreePrinter() = default;
-
-    void addNewRow(int level)
+    void addNewRow(int level, const std::string& name, const std::string& info)
     {
-
+        m_rows.push_back({std::string(level, '\t') + name, info});
     }
 
-    void printTree()
+	void printTree(const profiler::BlocksTree& tree, int level = 0,
+		profiler::timestamp_t parent_dur = 0, profiler::timestamp_t root_dur = 0)
+	{
+		if (tree.node)
+		{
+		    auto duration = tree.node->duration();
+		    float duration_ms = duration / 1e6f;
+		    float percent = parent_dur ? float(duration) / float(parent_dur) * 100.0f : 100.0f;
+		    float rpercent = root_dur ? float(duration) / float(root_dur) * 100.0f : 100.0f;
+		    std::stringstream info;
+		    info << percent << "%| " << rpercent << "%| " << duration_ms << " ms";
+		    addNewRow(level, tree.node->name(), info.str());
+		    if (root_dur == 0)
+		        root_dur = tree.node->duration();
+		}
+		else
+		{
+		    root_dur = 0;
+		}
+
+		for (auto i : tree.children)
+		    printTree(blocks[i], level + 1, tree.node ? tree.node->duration() : 0, root_dur);
+	}
+
+public :
+
+    TreePrinter(const profiler::blocks_t& blocks_) : blocks(blocks_) { }
+
+    void print(const profiler::BlocksTreeRoot& tree)
     {
-        for (auto& row : m_rows){
+		for (auto i : tree.children)
+        	printTree(blocks[i]);
+
+        for (auto& row : m_rows)
             std::cout << row.name << " " << row.info << std::endl;
-        }
     }
 };
 
-
-void printTree(TreePrinter& printer, const profiler::BlocksTree& tree, int level = 0, profiler::timestamp_t parent_dur = 0, profiler::timestamp_t root_dur = 0)
-{
-    //
-    //if (tree.node){
-    //    auto duration = tree.node->block()->duration();
-    //    float duration_ms = duration / 1e6f;
-    //    float percent = parent_dur ? float(duration) / float(parent_dur)*100.0f : 100.0f;
-    //    float rpercent = root_dur ? float(duration) / float(root_dur)*100.0f : 100.0f;
-    //    std::cout << std::string(level, '\t') << tree.node->getName() 
-    //        << std::string(5 - level, '\t') 
-    //        /*<< std::string(level, ' ')*/ << percent << "%| " 
-    //        << rpercent << "%| "
-    //        << duration_ms << " ms"
-    //        << std::endl;
-    //    if (root_dur == 0){
-    //        root_dur = tree.node->block()->duration();
-    //    }
-    //}
-    //else{
-    //    root_dur = 0;
-    //}
-    //
-
-    //for (const auto& i : tree.children){
-
-    //    printTree(printer, i, level + 1, tree.node ? tree.node->block()->duration() : 0, root_dur);
-    //}
-}
-
 int main(int argc, char* argv[])
 {
-
     profiler::thread_blocks_tree_t threaded_trees;
 
-    ::std::string filename;// = "test.prof";
+    ::std::string filename;
     if (argc > 1 && argv[1])
     {
         filename = argv[1];
     }
     else
     {
-        std::cout << "Specify prof file: ";
+        std::cout << "Usage: " << argv[0] << " <input_prof_file> [<output_prof_file>]";
+        return 0;
         std::getline(std::cin, filename);
-        //return 255;
     }
 
     ::std::string dump_filename;
@@ -90,22 +92,12 @@ int main(int argc, char* argv[])
     {
         dump_filename = argv[2];
     }
-    else
-    {
-        std::cout << "Specify output prof file: ";
-        std::getline(std::cin, dump_filename);
-    }
 
-    if (dump_filename.size() > 2)
+    if (dump_filename.size())
     {
         EASY_PROFILER_ENABLE;
         std::cout << "Will dump reader prof file to " << dump_filename << std::endl;
     }
-    else
-    {
-        dump_filename.clear();
-    }
-
 
     auto start = std::chrono::system_clock::now();
 
@@ -123,28 +115,28 @@ int main(int argc, char* argv[])
                                             descriptors, blocks, threaded_trees, bookmarks, descriptorsNumberInFile,
                                             version, pid, true, errorMessage);
     if (blocks_counter == 0)
+    {
         std::cout << "Can not read blocks from file " << filename.c_str() << "\nReason: " << errorMessage.str();
+        return 1;
+    }
 
     auto end = std::chrono::system_clock::now();
 
     std::cout << "Blocks count: " << blocks_counter << std::endl;
     std::cout << "dT =  " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " usec" << std::endl;
-    //for (const auto & i : threaded_trees){
-    //    TreePrinter p;
-    //    std::cout << std::string(20, '=') << " thread "<< i.first << " "<< std::string(20, '=') << std::endl;
-    //    printTree(p, i.second.tree,-1);
-    //}
+
+    for (const auto & i : threaded_trees)
+    {
+        std::cout << std::string(20, '=') << " thread " << i.first << " " << std::string(20, '=') << std::endl;
+        TreePrinter printer(blocks);
+        printer.print(i.second);
+    }
 
     if (!dump_filename.empty())
     {
         auto bcount = profiler::dumpBlocksToFile(dump_filename.c_str());
-
         std::cout << "Blocks count for reader: " << bcount << std::endl;
     }
-
-    //char c;
-    //::std::cin >> c;
-
 
     return 0;
 }
